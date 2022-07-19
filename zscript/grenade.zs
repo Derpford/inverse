@@ -11,7 +11,7 @@ class GrenadeLauncher : Weapon replaces PlasmaRifle {
     }
 
     action void GLShot() {
-        A_FireProjectile("TimeGrenade");
+        A_FireProjectile("TimeGrenade",pitch:-5);
         A_StartSound("weapons/rocklf",1);
         A_GunFlash();
         A_WeaponOffset(0,48,WOF_INTERPOLATE);
@@ -55,8 +55,10 @@ class TimeGrenade : Actor {
         Radius 8;
         PROJECTILE;
         -NOGRAVITY;
-        Speed 80; // Much faster, to account for the fact that it bounces and falls.
-        BounceFactor 0.6; // But it loses momentum fast.
+        Speed 40; // Faster, to account for the fact that it bounces and falls.
+        Gravity 0.4;
+        BounceFactor 0.5; // But it loses momentum fast.
+        WallBounceFactor 0.5;
     }
 
     action void GrenExplode() {
