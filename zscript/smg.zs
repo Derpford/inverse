@@ -9,7 +9,7 @@ class MachinePistol : Weapon replaces Shotgun {
     }
 
     action void MPShot() {
-        A_FireBullets(2,2,1,10,flags:FBF_NORANDOM|FBF_USEAMMO);
+        A_FireBullets(2,2,1,12,flags:FBF_NORANDOM|FBF_USEAMMO);
         A_StartSound("weapons/pistol",1);
         A_GunFlash();
         A_WeaponOffset(0,48,WOF_INTERPOLATE);
@@ -39,7 +39,7 @@ class MachinePistol : Weapon replaces Shotgun {
             PISG C 1 A_WeaponOffset(0,40,WOF_INTERPOLATE);
             PISG B 2 MPShot();
             PISG C 1 A_WeaponOffset(0,40,WOF_INTERPOLATE);
-            PISG A 3 A_WeaponOffset(0,32,WOF_INTERPOLATE);
+            PISG A 5 A_WeaponOffset(0,32,WOF_INTERPOLATE);
             Goto Ready;
         
         Flash:

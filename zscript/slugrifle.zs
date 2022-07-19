@@ -12,7 +12,7 @@ class SlugRifle : Weapon replaces Chaingun {
     }
 
     action void SGShot() {
-        A_FireBullets(0,0,3,50,flags:FBF_NORANDOM|FBF_USEAMMO);
+        A_FireBullets(0,0,6,25,flags:FBF_NORANDOM|FBF_USEAMMO);
         A_StartSound("weapons/shotgf",1);
         A_GunFlash();
         A_WeaponOffset(0,52,WOF_INTERPOLATE);

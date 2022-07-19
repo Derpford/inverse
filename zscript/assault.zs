@@ -14,7 +14,7 @@ class AssaultCannon : Weapon replaces SuperShotgun {
     }
 
     action void AShot() {
-        A_FireBullets(invoker.spread+3,1,1,25,flags:FBF_NORANDOM|FBF_USEAMMO);
+        A_FireBullets(invoker.spread+5,1,1,35,flags:FBF_NORANDOM|FBF_USEAMMO);
         invoker.spread = min(invoker.spread + 0.3, 5);
         A_StartSound("weapons/cgunf",1);
         A_GunFlash();
