@@ -52,6 +52,7 @@ class TimeGrenade : Actor {
     default {
         BounceType "Doom";
         DamageFunction (80);
+        Radius 8;
         PROJECTILE;
         -NOGRAVITY;
         Speed 80; // Much faster, to account for the fact that it bounces and falls.
