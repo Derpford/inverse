@@ -1,0 +1,14 @@
+"weapons/shotgf" dsdshtgn
+$pitchset "weapons/shotgf" 1.2
+
+"weapons/cgunr" dsdbload
+$pitchset "weapons/cgunr" 1.3
+"weapons/cgunf" dspistol
+$pitchset "weapons/cgunf" 0.8
+
+"weapons/napalmf" dsrlaunc
+$pitchset "weapons/napalmf" 0.8
+"weapons/napalms" dsfirxpl
+$pitchset "weapons/napalms" 3.0
+"weapons/napalmr" dssgcock
+$pitchset "weapons/napalmr" 0.9;
