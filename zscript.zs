@@ -1,6 +1,7 @@
 version "4.6"
 
 #include "zscript/ammo.zs"
+#include "zscript/heal.zs"
 #include "zscript/player.zs"
 
 #include "zscript/boomstick.zs"

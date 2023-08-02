@@ -2,28 +2,40 @@ class Buckshot : Shell replaces Clip {
     // Shotgun shells on the bullet slot.
     // In vanilla, 4 shells is 300-600 damage with the SSG, or 140-420 with the regular SG.
     // A clip is usually worth 50-150 damage.
-    // So, let's hit a decent middle ground of 200 potential damage, or 50 per shell.
+    // Quake's shells are worth 24 damage each and a small shellbox has 20 in it, so Quake's shellboxes are worth 480 damage...
+    // Whereas our boomstick does 33 per shell, and our slugrifle does 35 per shell. 
+    // At 8 shells per pack, this pickup would be worth ~260 damage, or ~130 when dropped from zombies.
     default {
         Inventory.PickupMessage "Picked up some shells.";
+        Inventory.Amount 8;
     }
 }
 
 class BuckBox : ShellBox replaces ClipBox {
+    // Whereas the big box should actually hold *FEWER* shells to make up for the fact that you're getting way more from zombies.
+    default {
+        Inventory.Amount 16;
+    }
 
 }
 
 class Mag : Clip replaces Shell {
     // Likewise, bullet ammo now goes in the shell slot.
     // Each mag should be worth somewhere in the neighborhood of 450 damage.
-    // ...I'm considering tripling the size of the mags, so that would mean 15 per bullet.
+    // The SMG does ~14 per shot if you land all 3 shots. The Assault Cannon, in turn, does 15 per shot.
+    // 24 * 15 = 360. On the low end for 4 shells, if you're using the vanilla SSG.
     default {
-        Inventory.Amount 30;
+        Inventory.Amount 24;
     }
 }
 
 class MagBox : ClipBox replaces ShellBox {
     default {
-        Inventory.Amount 90; // Not quite triple the original clipbox amount, but a lot more.
+        Inventory.Amount 60; 
+        // Not quite triple the original clipbox amount, but a lot more. 
+        // 60 * 15 = 900, which is...just over half what the SSG gets out of a shellbox.
+        // God, the SSG is just impossible to balance around, huh?
+        // It's roughly in range for a regular SG, though.
     }
 }
 

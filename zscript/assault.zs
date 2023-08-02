@@ -1,6 +1,6 @@
 class AssaultCannon : Weapon replaces SuperShotgun {
     // A big fuckoff minigun.
-    // Shoots more powerful bullets, but uses more bullet ammo per shot.
+    // Chews through ammo more rapidly if you hold down the button for a bit.
 
     double spread; // Increases as you shoot.
 
@@ -14,11 +14,23 @@ class AssaultCannon : Weapon replaces SuperShotgun {
     }
 
     action void AShot() {
-        A_FireBullets(invoker.spread+5,1,1,35,flags:FBF_NORANDOM|FBF_USEAMMO);
+        A_FireBullets(invoker.spread+2,1,2,15,flags:FBF_NORANDOM|FBF_USEAMMO);
         invoker.spread = min(invoker.spread + 0.3, 5);
-        A_StartSound("weapons/cgunf",1);
+        A_StartSound("weapons/cgunf",2);
         A_GunFlash();
         A_WeaponOffset(frandom(-invoker.spread,invoker.spread),40,WOF_INTERPOLATE);
+    }
+
+    action state ASpin() {
+        if (GetPlayerInput(INPUT_BUTTONS) & BT_ATTACK && invoker.CheckAmmo(PrimaryFire,false)) {
+            if (invoker.spread < 0.5) {
+                return invoker.ResolveState("Hold");
+            } else {
+                return invoker.ResolveState("Hold2");
+            }
+        } else {
+            return invoker.ResolveState(null);
+        }
     }
 
     states {
@@ -27,35 +39,45 @@ class AssaultCannon : Weapon replaces SuperShotgun {
             Stop;
 
         Select:
-            CHGG AB 3 A_Raise(30);
+            ASGG ABCD 3 A_Raise(40);
             Loop;
         
         Deselect:
-            CHGG A 1 A_Lower(10);
+            ASGG A 1 A_Lower(10);
             Loop;
         
         Ready:
-            CHGG A 1 {
+            ASGG A 1 {
                 A_WeaponReady();
                 invoker.spread = 0;
             }
             Loop;
         
         Fire:
-            CHGG B 3 A_StartSound("weapons/cgunr",1);
-            CHGG A 2;
+            ASGG BC 2 A_StartSound("weapons/cgunr",1);
+            ASGG D 2;
         Hold:
-            CHGG A 2 AShot();
-            CHGG B 2 A_WeaponOffset(0,32,WOF_INTERPOLATE);
-            CHGG A 2 A_Refire();
-            CHGG B 3 A_StartSound("weapons/shotgr",1);
-            CHGG A 4;
-            CHGG B 4;
+            ASGF A 1 AShot();
+            ASGF B 1 A_WeaponOffset(0,-2,WOF_ADD);
+            ASGG BCD 2 A_WeaponOffset(0,-2,WOF_ADD);
+            CHGG A 0 ASpin();
+            Goto Spindown;
+        Hold2:
+            ASGF A 1 AShot();
+            ASGF B 1;
+            ASGG BCD 1 A_WeaponOffset(0,-2,WOF_ADD);
+            ASGG A 0 ASpin();
+            Goto Spindown;
+        Spindown:
+            ASGG A 2 A_StartSound("weapons/shotgr",1);
+            ASGG B 2;
+            ASGG C 3;
+            ASGG D 4;
             Goto Ready;
         
         Flash:
-            CHGF A 2 Bright A_Light1;
-            CHGF B 2 Bright A_Light2;
+            TNT1 A 1 Bright A_Light1;
+            TNT1 A 1 Bright A_Light2;
             Goto LightDone;
     } 
 }
