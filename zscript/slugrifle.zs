@@ -137,20 +137,28 @@ class FirePellet : Actor {
 
 class FireDot : Inventory {
     int paintics;
-    Property Tics : paintics;
+    int pausetics;
+    int tickstate;
+    Property Tics : paintics, pausetics;
     default {
         Inventory.Amount 1;
-        Inventory.MaxAmount 3;
-        FireDot.Tics 35;
+        Inventory.MaxAmount 1;
+        FireDot.Tics 5, 5;
     }
 
     override void DoEffect() {
+        Super.DoEffect();
         if (owner.bCORPSE || owner.health <= 0) { owner.TakeInventory("FireDot",1); return; }
-        if ( paintics > 0 ) {
+        if ( paintics > 0) {
             if ( !owner.InStateSequence(owner.curstate, owner.ResolveState("pain")) ) {
-                owner.SetState(owner.ResolveState("pain"));
-            }
-            paintics--;
+                if ( tickstate >= pausetics ) {
+                    owner.SetState(owner.ResolveState("pain"));
+                    tickstate = 0;
+                    paintics--;
+                } else {
+                    tickstate++;
+                }
+            } 
         } else {
             owner.TakeInventory("FireDot",1);
             return;
