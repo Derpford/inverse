@@ -1,20 +1,23 @@
-class SlugRifle : Weapon replaces Chaingun {
+class DragonRifle : Weapon replaces Chaingun {
     // The counterpart to the Boomstick.
-    // Rapidly fires 5 perfect-accuracy pellets, each of which does 7 damage; fires up to 3 before having to rack the slide.
+    // Rapidly fires a spread of ripping fireballs that stunlock targets; fires up to 3 before having to rack the slide.
 
     int burst; // ticks upward with each shot. Resets on ready.
 
     default {
-        Inventory.PickupMessage "You got a burst-firing slug rifle!";
+        Inventory.PickupMessage "You got the Dragon Rifle!";
         Weapon.AmmoType "Buckshot";
-        Weapon.AmmoUse 2;
+        Weapon.AmmoUse 1;
         Weapon.AmmoGive 6;
         Weapon.SlotNumber 2;
-        Weapon.SlotPriority 1.5;
+        Weapon.SlotPriority 0.5;
     }
 
     action void SGShot() {
-        A_FireBullets(0,0,5,7,flags:FBF_NORANDOM|FBF_USEAMMO);
+        // A_FireBullets(0,0,5,7,flags:FBF_NORANDOM|FBF_USEAMMO);
+        for (int i = -2; i <= 2; i++) {
+            A_FireProjectile("FirePellet",i * 2, (i == 0));
+        }
         A_StartSound("weapons/shotgf",1);
         A_GunFlash();
         A_WeaponOffset(0,52,WOF_INTERPOLATE);
@@ -90,5 +93,67 @@ class SlugRifle : Weapon replaces Chaingun {
             SLUF A 3 Bright A_Light1();
             SLUF B 2 Bright A_Light2();
             Goto LightDone;
+    }
+}
+
+class FirePellet : Actor {
+    int bonus;
+    default {
+        Projectile;
+        DamageFunction (7+bonus);
+        RenderStyle "Add";
+        Scale 0.7;
+        Radius 8;
+        Height 2;
+        Speed 40;
+    }
+
+    override int DoSpecialDamage(Actor tgt, int dmg, name mod) {
+        int newdmg = super.DoSpecialDamage(tgt,dmg,mod);
+        tgt.GiveInventory("FireDot",1);
+
+        return newdmg;
+    }
+
+    override void Tick() {
+        super.Tick();
+        if (vel.length() > 5) {
+            vel = vel.unit() * (vel.length() - 1.0);
+        }
+        if (vel.length() < 10) {
+            bonus = 7;
+        }
+    }
+
+    states {
+        Spawn:
+            BAL1 AB 4;
+            Loop;
+        Death:
+            BAL1 CDE 4;
+            Stop;
+    }
+}
+
+class FireDot : Inventory {
+    int paintics;
+    Property Tics : paintics;
+    default {
+        Inventory.Amount 1;
+        Inventory.MaxAmount 3;
+        FireDot.Tics 35;
+    }
+
+    override void DoEffect() {
+        if (owner.bCORPSE || owner.health <= 0) { owner.TakeInventory("FireDot",1); return; }
+        if ( paintics > 0 ) {
+            if ( !owner.InStateSequence(owner.curstate, owner.ResolveState("pain")) ) {
+                owner.SetState(owner.ResolveState("pain"));
+            }
+            paintics--;
+        } else {
+            owner.TakeInventory("FireDot",1);
+            return;
+        }
     }
 }
