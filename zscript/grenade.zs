@@ -8,6 +8,7 @@ class GrenadeLauncher : Weapon replaces PlasmaRifle {
         Weapon.AmmoUse 1;
         Weapon.AmmoGive 5;
         Weapon.SlotNumber 4;
+        Weapon.SlotPriority 1.0;
     }
 
     action void GLShot() {

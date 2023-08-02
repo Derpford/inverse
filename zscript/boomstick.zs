@@ -5,6 +5,7 @@ class Boomstick : Weapon replaces Pistol {
     default {
         Inventory.PickupMessage "You got a boomstick! Groovy.";
         Weapon.SlotNumber 2;
+        Weapon.SlotPriority 1.0;
         Weapon.AmmoUse 1;
         Weapon.AmmoGive 4;
         Weapon.AmmoType "Buckshot";

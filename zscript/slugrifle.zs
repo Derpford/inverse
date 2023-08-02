@@ -10,7 +10,7 @@ class DragonRifle : Weapon replaces Chaingun {
         Weapon.AmmoUse 1;
         Weapon.AmmoGive 6;
         Weapon.SlotNumber 2;
-        Weapon.SlotPriority 0.5;
+        Weapon.SlotPriority 1.5;
     }
 
     action void SGShot() {
