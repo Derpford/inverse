@@ -7,7 +7,7 @@ class Boomstick : Weapon replaces Pistol {
         Weapon.SlotNumber 2;
         Weapon.AmmoUse 1;
         Weapon.AmmoGive 4;
-        Weapon.AmmoType "Shell";
+        Weapon.AmmoType "Buckshot";
     }
 
     action void BoomShot() {

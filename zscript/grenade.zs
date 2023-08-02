@@ -4,7 +4,7 @@ class GrenadeLauncher : Weapon replaces PlasmaRifle {
 
     default {
         Inventory.PickupMessage "Grabbed a Grenade Launcher!";
-        Weapon.AmmoType "RocketAmmo";
+        Weapon.AmmoType "GrenadeAmmo";
         Weapon.AmmoUse 1;
         Weapon.AmmoGive 5;
         Weapon.SlotNumber 4;

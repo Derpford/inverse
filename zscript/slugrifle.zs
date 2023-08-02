@@ -6,7 +6,7 @@ class SlugRifle : Weapon replaces Chaingun {
 
     default {
         Inventory.PickupMessage "You got a burst-firing slug rifle!";
-        Weapon.AmmoType "Shell";
+        Weapon.AmmoType "Buckshot";
         Weapon.AmmoUse 2;
         Weapon.AmmoGive 6;
         Weapon.SlotNumber 2;

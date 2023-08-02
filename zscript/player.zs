@@ -5,7 +5,7 @@ class InverseGuy : DoomPlayer {
 
     default {
         Player.StartItem "Boomstick";
-        Player.StartItem "Shell", 15;
+        Player.StartItem "Buckshot", 15;
         Player.StartItem "Fist";
     }
 

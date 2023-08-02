@@ -3,7 +3,7 @@ class NapalmCannon : Weapon replaces BFG9000 {
     // Rips through enemies for massive damage.
     Default {
         Inventory.PickupMessage "You got the Napalm Cannon! Porkchop sandwiches.";
-        Weapon.AmmoType "RocketAmmo";
+        Weapon.AmmoType "GrenadeAmmo";
         Weapon.AmmoUse 10;
         Weapon.AmmoGive 10;
         Weapon.SlotNumber 4;

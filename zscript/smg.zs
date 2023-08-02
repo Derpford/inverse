@@ -3,7 +3,7 @@ class SubGun : Weapon replaces Shotgun {
     default {
         Inventory.PickupMessage "You got a burst-firing SMG!";
         Weapon.SlotNumber 3;
-        Weapon.AmmoType "Clip";
+        Weapon.AmmoType "Mag";
         Weapon.AmmoUse 1;
         Weapon.AmmoGive 24;
     }

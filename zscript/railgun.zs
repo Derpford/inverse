@@ -5,7 +5,7 @@ class Railgun : Weapon replaces RocketLauncher {
     default {
         Inventory.PickupMessage "You got the Charge Railgun!";
         Weapon.SlotNumber 5;
-        Weapon.AmmoType "Cell";
+        Weapon.AmmoType "Battery";
         Weapon.AmmoUse 5; // Per charge level.
         Weapon.AmmoGive 40;
     }
@@ -33,7 +33,7 @@ class Railgun : Weapon replaces RocketLauncher {
     action void RailShot() {
         int dmg = 80 * (2 ** invoker.charge);
         A_RailAttack(dmg,useammo:false,color1:"FFFFFF",color2:"00AAFF");
-        A_TakeInventory("Cell",invoker.ammouse1 * (invoker.charge + 1));
+        A_TakeInventory("Battery",invoker.ammouse1 * (invoker.charge + 1));
         double p = 1.2 - (invoker.charge * .05);
         A_StartSound("weapons/bfgx",1,pitch:p);
         A_GunFlash();

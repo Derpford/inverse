@@ -8,7 +8,7 @@ class AssaultCannon : Weapon replaces SuperShotgun {
         Inventory.PickupMessage "You got the Assault Cannon! Like a firehose of lead.";
         Weapon.SlotNumber 3;
         Weapon.SlotPriority 1.5;
-        Weapon.AmmoType "Clip";
+        Weapon.AmmoType "Mag";
         Weapon.AmmoGive 30;
         Weapon.AmmoUse 2;
     }
