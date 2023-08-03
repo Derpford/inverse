@@ -11,4 +11,7 @@ $pitchset "weapons/napalmf" 0.8
 "weapons/napalms" dsfirxpl
 $pitchset "weapons/napalms" 3.0
 "weapons/napalmr" dssgcock
-$pitchset "weapons/napalmr" 0.9;
+$pitchset "weapons/napalmr" 0.9
+
+"weapons/dragonx" dsfirxpl
+$limit weapons/dragonx 6

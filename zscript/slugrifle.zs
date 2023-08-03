@@ -1,6 +1,6 @@
 class DragonRifle : Weapon replaces Chaingun {
     // The counterpart to the Boomstick.
-    // Rapidly fires a spread of ripping fireballs that stunlock targets; fires up to 3 before having to rack the slide.
+    // Rapidly fires a spread of fireballs that stunlock targets.
 
     int burst; // ticks upward with each shot. Resets on ready.
 
@@ -13,11 +13,10 @@ class DragonRifle : Weapon replaces Chaingun {
         Weapon.SlotPriority 1.5;
     }
 
-    action void SGShot() {
+    action void SGShot(double offs) {
         // A_FireBullets(0,0,5,7,flags:FBF_NORANDOM|FBF_USEAMMO);
-        for (int i = -2; i <= 2; i++) {
-            A_FireProjectile("FirePellet",i * 2, (i == 0));
-        }
+        A_FireProjectile("FirePellet",offs);
+        A_FireProjectile("FirePellet",0, false);
         A_StartSound("weapons/shotgf",1);
         A_GunFlash();
         A_WeaponOffset(0,52,WOF_INTERPOLATE);
@@ -42,56 +41,37 @@ class DragonRifle : Weapon replaces Chaingun {
             Stop;
         
         Select:
-            SLUG C 1 A_Raise(20);
+            DRGG A 1 A_Raise(20);
             Loop;
         Deselect:
-            SLUG AB 3;
-        DeselectReal:
-            SLUG C 1 A_Lower(20);
+            DRGG A 1 A_Lower(20);
             Loop;
         
         Ready:
-            SLUG BA 2;
         ReadyReal:
-            SLUG A 0 { invoker.burst = 0; }
-            SLUG A 1 A_WeaponReady();
+            DRGG A 0 { invoker.burst = 0; }
+            DRGG A 1 A_WeaponReady();
             Loop;
         
         Fire:
-            SLUG A 4 SGShot();
-            SLUG A 2 A_WeaponOffset(0,42,WOF_INTERPOLATE);
-            SLUG A 0 SGRefire();
-            Goto ReadyReal;
-        Rack:
-            SLUG A 6 A_WeaponOffset(0,48,WOF_INTERPOLATE);
-            SLUG B 5 A_WeaponOffset(0,32,WOF_INTERPOLATE);
-            SLUG D 0 A_WeaponReady(WRF_NOFIRE);
-            SLUG C 3 {
-                A_StartSound("weapons/sshotc");
+            DRGF A 4 Bright SGShot(-0.5);
+            DRGG A 2 A_WeaponOffset(0,42,WOF_INTERPOLATE);
+            DRGF B 4 Bright SGShot(0.5);
+            DRGG A 2 A_WeaponOffset(0,42,WOF_INTERPOLATE);
+            DRGG A 4 {
+                A_SetTics(min(12,4+invoker.burst));
                 A_WeaponReady(WRF_NOFIRE);
             }
-            SLUG D 7 {
-                A_WeaponReady(WRF_NOFIRE);
-                A_WeaponOffset(0,40,WOF_INTERPOLATE);
+            DRGG A 0 A_StartSound("weapons/sshotc",2);
+            DRGG A 4 {
+                A_WeaponReady();
+                A_WeaponOffset(0,36,WOF_INTERPOLATE);
             }
-            SLUG E 5 {
-                A_WeaponReady(WRF_NOFIRE);
-                A_StartSound("weapons/sshotl");
-            }
-            SLUG F 4 {
-                A_WeaponReady(WRF_NOFIRE);
-                A_WeaponOffset(0,32,WOF_INTERPOLATE);
-            }
-            SLUG C 5 {
-                A_WeaponReady(WRF_NOFIRE);
-                A_StartSound("weapons/sshoto");
-            }
-            SLUG B 3 A_WeaponReady(WRF_NOFIRE);
             Goto ReadyReal;
 
         Flash:
-            SLUF A 3 Bright A_Light1();
-            SLUF B 2 Bright A_Light2();
+            TNT1 A 3 Bright A_Light1();
+            TNT1 A 2 Bright A_Light2();
             Goto LightDone;
     }
 }
@@ -100,12 +80,13 @@ class FirePellet : Actor {
     int bonus;
     default {
         Projectile;
-        DamageFunction (7+bonus);
+        DamageFunction (15+bonus);
         RenderStyle "Add";
         Scale 0.7;
         Radius 8;
         Height 2;
         Speed 40;
+        DeathSound "weapons/dragonx";
     }
 
     override int DoSpecialDamage(Actor tgt, int dmg, name mod) {
@@ -121,7 +102,7 @@ class FirePellet : Actor {
             vel = vel.unit() * (vel.length() - 1.0);
         }
         if (vel.length() < 10) {
-            bonus = 7;
+            bonus = 15;
         }
     }
 
@@ -143,7 +124,16 @@ class FireDot : Inventory {
     default {
         Inventory.Amount 1;
         Inventory.MaxAmount 1;
-        FireDot.Tics 5, 5;
+        FireDot.Tics 2, 5;
+    }
+
+    override bool HandlePickup(Inventory other) {
+        if (other.GetClass() == self.GetClass()) {
+            paintics = min(10,paintics+1); // Half effect when stacked.
+            other.bPickupGood = true;
+            return true;
+        }
+        return false;
     }
 
     override void DoEffect() {
