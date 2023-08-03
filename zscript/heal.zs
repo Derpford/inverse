@@ -57,7 +57,7 @@ class LightArmor : BasicArmorBonus replaces GreenArmor {
 
 class HeavyArmor : LightArmor replaces BlueArmor {
     default {
-        Armor.SaveAmount 100;
+        Armor.SaveAmount 150;
         Inventory.PickupMessage "Got the Heavy Armor";
     }
 
