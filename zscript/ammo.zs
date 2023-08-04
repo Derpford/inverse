@@ -97,7 +97,7 @@ class Battery : Ammo replaces RocketAmmo {
     // Less than the equivalent bullet ammo pickup, but piercing makes up for it.
     mixin OverfillAmmo;
     default {
-        Inventory.Amount 20;
+        Inventory.Amount 10;
         Inventory.MaxAmount 250;
         Inventory.PickupMessage "You got a battery.";
         Ammo.BackpackAmount 40;
@@ -114,7 +114,7 @@ class BatteryBox : Battery replaces RocketBox {
     mixin OverfillAmmo;
 
     default {
-        Inventory.Amount 100;
+        Inventory.Amount 50;
         Inventory.MaxAmount 250;
         Inventory.PickupMessage "You got a battery box.";
     }
