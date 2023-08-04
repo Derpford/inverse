@@ -15,8 +15,9 @@ class DragonRifle : Weapon replaces Chaingun {
 
     action void SGShot(double offs) {
         // A_FireBullets(0,0,5,7,flags:FBF_NORANDOM|FBF_USEAMMO);
-        A_FireProjectile("FirePellet",offs);
-        A_FireProjectile("FirePellet",0, false);
+        A_FireProjectile("FirePellet",offs * invoker.burst);
+        A_FireProjectile("FirePellet",offs * -invoker.burst);
+        A_FireProjectile("FirePellet",offs * invoker.burst * 0.1, false);
         A_StartSound("weapons/shotgf",1);
         A_GunFlash();
         A_WeaponOffset(0,52,WOF_INTERPOLATE);
@@ -59,7 +60,6 @@ class DragonRifle : Weapon replaces Chaingun {
             DRGF B 4 Bright SGShot(0.5);
             DRGG A 2 A_WeaponOffset(0,42,WOF_INTERPOLATE);
             DRGG A 4 {
-                A_SetTics(min(12,4+invoker.burst));
                 A_WeaponReady(WRF_NOFIRE);
             }
             DRGG A 0 A_StartSound("weapons/sshotc",2);
@@ -77,10 +77,9 @@ class DragonRifle : Weapon replaces Chaingun {
 }
 
 class FirePellet : Actor {
-    int bonus;
     default {
         Projectile;
-        DamageFunction (15+bonus);
+        DamageFunction (9);
         RenderStyle "Add";
         Scale 0.7;
         Radius 8;
@@ -92,18 +91,11 @@ class FirePellet : Actor {
     override int DoSpecialDamage(Actor tgt, int dmg, name mod) {
         int newdmg = super.DoSpecialDamage(tgt,dmg,mod);
         tgt.GiveInventory("FireDot",1);
-
+        let fd = tgt.FindInventory("FireDot");
+        if (fd) {
+            fd.target = target;
+        }
         return newdmg;
-    }
-
-    override void Tick() {
-        super.Tick();
-        if (vel.length() > 5) {
-            vel = vel.unit() * (vel.length() - 1.0);
-        }
-        if (vel.length() < 10) {
-            bonus = 15;
-        }
     }
 
     states {
@@ -118,40 +110,69 @@ class FirePellet : Actor {
 
 class FireDot : Inventory {
     int paintics;
-    int pausetics;
-    int tickstate;
-    Property Tics : paintics, pausetics;
+    int timer;
+    Property Tics : paintics;
     default {
         Inventory.Amount 1;
         Inventory.MaxAmount 1;
-        FireDot.Tics 2, 5;
-    }
-
-    override bool HandlePickup(Inventory other) {
-        if (other.GetClass() == self.GetClass()) {
-            paintics = min(10,paintics+1); // Half effect when stacked.
-            other.bPickupGood = true;
-            return true;
-        }
-        return false;
+        FireDot.Tics 10;
     }
 
     override void DoEffect() {
         Super.DoEffect();
-        if (owner.bCORPSE || owner.health <= 0) { owner.TakeInventory("FireDot",1); return; }
-        if ( paintics > 0) {
-            if ( !owner.InStateSequence(owner.curstate, owner.ResolveState("pain")) ) {
-                if ( tickstate >= pausetics ) {
-                    owner.SetState(owner.ResolveState("pain"));
-                    tickstate = 0;
-                    paintics--;
-                } else {
-                    tickstate++;
-                }
-            } 
-        } else {
-            owner.TakeInventory("FireDot",1);
-            return;
+        if (owner.bCORPSE || owner.health <= 0) { Detonate(); return; }
+        if (timer % 5 == 0) {
+            owner.A_SpawnItemEX("BurnPuff",owner.radius+16,0,frandom(owner.height/2.,owner.height),angle:frandom(0,360));
         }
+        if (timer == 0) {
+            owner.TriggerPainChance("Fire",false);
+            timer = paintics;
+        } else {
+            timer--;
+        }
+    }
+
+    override void ModifyDamage(int dmg, Name mod, out int new, bool passive, Actor inf, Actor src, int flags) {
+        super.ModifyDamage(dmg,mod,new,passive,inf,src,flags);
+        if (passive) {
+            if (inf is "FirePellet") { return; }
+            Detonate();
+        }
+    }
+
+    void Detonate() {
+        let fb = owner.Spawn("FlameBlast",owner.pos+(0,0,owner.height/2.));
+        if (fb) {
+            fb.target = target;
+            owner.TakeInventory("FireDot",1);
+        }
+    }
+}
+
+class BurnPuff : Actor {
+    default {
+        +NOINTERACTION;
+        RenderStyle "Add";
+    }
+
+    states {
+        Spawn:
+            BAL1 BCDE 4 Bright;
+            Stop;
+    }
+}
+
+class FlameBlast : Actor {
+    default {
+        Projectile;
+        +BRIGHT;
+    }
+
+    states {
+        Spawn:
+            MISL B 6;
+            MISL C 5 A_Explode(32,128,fulldamagedistance:128);
+            MISL D 4;
+            Stop;
     }
 }

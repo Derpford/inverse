@@ -10,11 +10,16 @@ class AssaultCannon : Weapon replaces SuperShotgun {
         Weapon.SlotPriority 1.5;
         Weapon.AmmoType "Mag";
         Weapon.AmmoGive 30;
-        Weapon.AmmoUse 2;
+        Weapon.AmmoUse 1;
     }
 
     action void AShot() {
-        A_FireBullets(invoker.spread+2,1,2,15,flags:FBF_NORANDOM|FBF_USEAMMO);
+        int numbullets = 2;
+        if (invoker.spread > 2.5) { numbullets = 3; }
+        if (invoker.spread > 4) { numbullets = 4; }
+        for (int i = 0; i < numbullets; i++) {
+            A_FireBullets(invoker.spread+2,1,-1,15,flags:FBF_NORANDOM|FBF_USEAMMO);
+        }
         invoker.spread = min(invoker.spread + 0.3, 5);
         A_StartSound("weapons/cgunf",2);
         A_GunFlash();
