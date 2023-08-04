@@ -120,7 +120,6 @@ class FireDot : Inventory {
 
     override void DoEffect() {
         Super.DoEffect();
-        if (owner.bCORPSE || owner.health <= 0) { Detonate(); return; }
         if (timer % 5 == 0) {
             owner.A_SpawnItemEX("BurnPuff",owner.radius+16,0,frandom(owner.height/2.,owner.height),angle:frandom(0,360));
         }
@@ -136,14 +135,15 @@ class FireDot : Inventory {
         super.ModifyDamage(dmg,mod,new,passive,inf,src,flags);
         if (passive) {
             if (inf is "FirePellet") { return; }
-            Detonate();
+            Detonate(dmg);
         }
     }
 
-    void Detonate() {
-        let fb = owner.Spawn("FlameBlast",owner.pos+(0,0,owner.height/2.));
+    void Detonate(int dmg) {
+        let fb = FlameBlast(owner.Spawn("FlameBlast",owner.pos+(0,0,owner.height/2.)));
         if (fb) {
             fb.target = target;
+            fb.bonus = dmg;
             owner.TakeInventory("FireDot",1);
         }
     }
@@ -163,6 +163,7 @@ class BurnPuff : Actor {
 }
 
 class FlameBlast : Actor {
+    int bonus;
     default {
         Projectile;
         +BRIGHT;
@@ -171,7 +172,7 @@ class FlameBlast : Actor {
     states {
         Spawn:
             MISL B 6;
-            MISL C 5 A_Explode(32,128,fulldamagedistance:128);
+            MISL C 5 A_Explode(32+invoker.bonus,128,fulldamagedistance:128);
             MISL D 4;
             Stop;
     }
