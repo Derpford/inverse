@@ -5,7 +5,7 @@ class DragonRifle : Weapon replaces Chaingun {
     int burst; // ticks upward with each shot. Resets on ready.
 
     default {
-        Inventory.PickupMessage "You got the Dragon Rifle!";
+        Inventory.PickupMessage "You got the Dragon Mark Rifle!";
         Weapon.AmmoType "Buckshot";
         Weapon.AmmoUse 1;
         Weapon.AmmoGive 6;
@@ -15,9 +15,9 @@ class DragonRifle : Weapon replaces Chaingun {
 
     action void SGShot(double offs) {
         // A_FireBullets(0,0,5,7,flags:FBF_NORANDOM|FBF_USEAMMO);
-        A_FireProjectile("FirePellet",offs * invoker.burst);
-        A_FireProjectile("FirePellet",offs * -invoker.burst);
-        A_FireProjectile("FirePellet",offs * invoker.burst * 0.1, false);
+        A_FireProjectile("FirePellet",offs * invoker.burst, false);
+        A_FireProjectile("FirePellet",offs * -invoker.burst, false);
+        A_FireProjectile("FirePellet",offs * invoker.burst * 0.1);
         A_StartSound("weapons/shotgf",1);
         A_GunFlash();
         A_WeaponOffset(0,52,WOF_INTERPOLATE);
@@ -50,14 +50,14 @@ class DragonRifle : Weapon replaces Chaingun {
         
         Ready:
         ReadyReal:
-            DRGG A 0 { invoker.burst = 0; }
+            DRGG A 0 { invoker.burst = 1; }
             DRGG A 1 A_WeaponReady();
             Loop;
         
         Fire:
-            DRGF A 4 Bright SGShot(-0.5);
+            DRGF A 4 Bright SGShot(-1);
             DRGG A 2 A_WeaponOffset(0,42,WOF_INTERPOLATE);
-            DRGF B 4 Bright SGShot(0.5);
+            DRGF B 4 Bright SGShot(1);
             DRGG A 2 A_WeaponOffset(0,42,WOF_INTERPOLATE);
             DRGG A 4 {
                 A_WeaponReady(WRF_NOFIRE);
@@ -120,6 +120,7 @@ class FireDot : Inventory {
 
     override void DoEffect() {
         Super.DoEffect();
+        if (owner.bCORPSE || owner.health <= 0) { owner.TakeInventory("FireDot",1); return; }
         if (timer % 5 == 0) {
             owner.A_SpawnItemEX("BurnPuff",owner.radius+16,0,frandom(owner.height/2.,owner.height),angle:frandom(0,360));
         }
@@ -144,6 +145,7 @@ class FireDot : Inventory {
         if (fb) {
             fb.target = target;
             fb.bonus = dmg;
+            fb.rad = owner.radius;
             owner.TakeInventory("FireDot",1);
         }
     }
@@ -164,6 +166,7 @@ class BurnPuff : Actor {
 
 class FlameBlast : Actor {
     int bonus;
+    int rad;
     default {
         Projectile;
         +BRIGHT;
@@ -172,7 +175,7 @@ class FlameBlast : Actor {
     states {
         Spawn:
             MISL B 6;
-            MISL C 5 A_Explode(32+invoker.bonus,128,fulldamagedistance:128);
+            MISL C 5 A_Explode(32+invoker.bonus,invoker.rad+80,fulldamagedistance:128);
             MISL D 4;
             Stop;
     }
