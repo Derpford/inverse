@@ -20,7 +20,7 @@ class Railgun : Weapon replaces RocketLauncher {
         invoker.progress += 1;
         if(invoker.progress > 10) {
             invoker.progress = 0;
-            if (CountInv("Cell") > invoker.ammouse1 * (invoker.charge + 1)) {
+            if (CountInv("Battery") > invoker.ammouse1 * (invoker.charge + 1)) {
                 // We have enough ammo to increase the charge level.
                 invoker.charge = min(invoker.charge + 1,3);
             }
