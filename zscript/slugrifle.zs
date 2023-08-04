@@ -120,7 +120,7 @@ class FireDot : Inventory {
 
     override void DoEffect() {
         Super.DoEffect();
-        if (owner.bCORPSE || owner.health <= 0) { owner.TakeInventory("FireDot",1); return; }
+        if (owner.bCORPSE || owner.health <= 0) { Detonate(0); return; }
         if (timer % 5 == 0) {
             owner.A_SpawnItemEX("BurnPuff",owner.radius+16,0,frandom(owner.height/2.,owner.height),angle:frandom(0,360));
         }
