@@ -100,7 +100,7 @@ class Battery : Ammo replaces RocketAmmo {
         Inventory.Amount 10;
         Inventory.MaxAmount 250;
         Inventory.PickupMessage "You got a battery.";
-        Ammo.BackpackAmount 40;
+        Ammo.BackpackAmount 20;
         Ammo.BackpackMaxAmount 500;
     }
 
